@@ -22,6 +22,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        qt:
+          - qt5
+          - qt6
         python-version:
           - "3.10"
           - "3.11"
@@ -31,12 +34,16 @@ jobs:
           # 3.14t needs a jupyter-core release
           # - "3.14t"
           - "pypy-3.11"
-        include:
+        exclude:
           # qt6 not supported on 3.14 yet
-          - python-version: "3.10"
+          - python-version: "3.14"
             qt: qt6
           - python-version: "3.13"
-            qt: qt6
+            qt: qt5
+          - python-version: "3.12"
+            qt: qt5
+          - python-version: "3.11"
+            qt: qt5
 
     steps:
       - name: Checkout
@@ -49,8 +56,7 @@ jobs:
       - name: set qt env
         run: |
           echo "QT=${{ matrix.qt }}" >> $GITHUB_ENV
-        with:
-          shell: bash
+        shell: bash
 
       - name: Install hatch
         run: |
